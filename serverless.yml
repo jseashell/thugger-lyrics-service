@@ -1,0 +1,41 @@
+service: thugger-lyrics-service
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: go1.x
+  region: us-east-1
+  httpApi:
+    cors: true
+  logs:
+    httpApi: true
+  iam:
+   role:
+     statements:
+       - Effect: "Allow"
+         Action:
+          - "dynamodb:GetItem"
+          - "dynamodb:Scan"
+         Resource: 
+          - "arn:aws:dynamodb:*:*:table/thugger-lyrics"
+          - "arn:aws:dynamodb:*:*:table/thugger-songs"
+
+package:
+  individually: true
+  patterns:
+    - '!./**'
+    - ./bin/**
+
+functions:
+  random:
+    handler: bin/random
+    events:
+      - httpApi:
+          path: /random
+          method: get
+  song:
+    handler: bin/song
+    events:
+      - httpApi:
+          path: /song
+          method: get
