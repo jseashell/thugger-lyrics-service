@@ -38,19 +38,19 @@ type Song struct {
 }
 
 type RandomSong struct {
-	ArtistNames              string   `dynamodbav:"artist_names"`
-	FullTitle                string   `dynamodbav:"full_title"`
-	HeaderImageThumbnailURL  string   `dynamodbav:"header_image_thumbnail_url"`
-	HeaderImageURL           string   `dynamodbav:"header_image_url"`
-	SongID                   int      `dynamodbav:"id"`
-	ID                       string   `dynamodbav:"uuid"`
-	Path                     string   `dynamodbav:"path"`
-	ReleaseDateForDisplay    string   `dynamodbav:"release_date_for_display"`
-	SongArtImageThumbnailURL string   `dynamodbav:"song_art_image_thumbnail_url"`
-	SongArtImageURL          string   `dynamodbav:"song_art_image_url"`
-	Title                    string   `dynamodbav:"title"`
-	URL                      string   `dynamodbav:"url"`
-	Lyrics                   []string `dynamodbav:"lyrics"`
+	ArtistNames              string   `dynamodbav:"ArtistNames"`
+	FullTitle                string   `dynamodbav:"FullTitle"`
+	HeaderImageThumbnailURL  string   `dynamodbav:"HeaderImageThumbnailURL"`
+	HeaderImageURL           string   `dynamodbav:"HeaderImageURL"`
+	SongID                   int      `dynamodbav:"SongID"`
+	ID                       string   `dynamodbav:"ID"`
+	Path                     string   `dynamodbav:"Path"`
+	ReleaseDateForDisplay    string   `dynamodbav:"ReleaseDateForDisplay"`
+	SongArtImageThumbnailURL string   `dynamodbav:"SongArtImageThumbnailURL"`
+	SongArtImageURL          string   `dynamodbav:"SongArtImageURL"`
+	Title                    string   `dynamodbav:"Title"`
+	URL                      string   `dynamodbav:"URL"`
+	Lyrics                   []string `dynamodbav:"Lyrics"`
 }
 
 // Handler is our lambda handler invoked by the `lambda.Start` function call
