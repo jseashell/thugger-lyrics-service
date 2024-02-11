@@ -92,7 +92,7 @@ func randomSong() Song {
 
 	res, err := dbClient.Scan(context.TODO(), &dynamodb.ScanInput{
 		ExclusiveStartKey: av,
-		TableName:         aws.String("thugger-songs"),
+		TableName:         aws.String("thugger-songs-main"),
 		Limit:             limitPtr,
 	})
 
