@@ -21,44 +21,51 @@ import (
 // https://serverless.com/framework/docs/providers/aws/events/apigateway/#lambda-proxy-integration
 type Response events.APIGatewayProxyResponse
 
+type Data struct {
+	ID     string   `json:"id"`
+	Song   Song     `json:"song"`
+	Lyrics []string `json:"lyrics"`
+}
 type Song struct {
-	ArtistNames              string   `json:"artist_names"`
-	FullTitle                string   `json:"full_title"`
-	HeaderImageThumbnailURL  string   `json:"header_image_thumbnail_url"`
-	HeaderImageURL           string   `json:"header_image_url"`
-	SongID                   int      `json:"id"`
-	ID                       string   `json:"uuid"`
-	Path                     string   `json:"path"`
-	ReleaseDateForDisplay    string   `json:"release_date_for_display"`
-	SongArtImageThumbnailURL string   `json:"song_art_image_thumbnail_url"`
-	SongArtImageURL          string   `json:"song_art_image_url"`
-	Title                    string   `json:"title"`
-	URL                      string   `json:"url"`
-	Lyrics                   []string `json:"lyrics"`
+	ArtistNames              string `json:"artist_names"`
+	FullTitle                string `json:"full_title"`
+	HeaderImageThumbnailURL  string `json:"header_image_thumbnail_url"`
+	HeaderImageURL           string `json:"header_image_url"`
+	SongID                   int    `json:"id"`
+	ID                       string `json:"uuid"`
+	Path                     string `json:"path"`
+	ReleaseDateForDisplay    string `json:"release_date_for_display"`
+	SongArtImageThumbnailURL string `json:"song_art_image_thumbnail_url"`
+	SongArtImageURL          string `json:"song_art_image_url"`
+	Title                    string `json:"title"`
+	URL                      string `json:"url"`
 }
 
 type RandomSong struct {
-	ArtistNames              string   `dynamodbav:"ArtistNames"`
-	FullTitle                string   `dynamodbav:"FullTitle"`
-	HeaderImageThumbnailURL  string   `dynamodbav:"HeaderImageThumbnailURL"`
-	HeaderImageURL           string   `dynamodbav:"HeaderImageURL"`
-	SongID                   int      `dynamodbav:"SongID"`
-	ID                       string   `dynamodbav:"ID"`
-	Path                     string   `dynamodbav:"Path"`
-	ReleaseDateForDisplay    string   `dynamodbav:"ReleaseDateForDisplay"`
-	SongArtImageThumbnailURL string   `dynamodbav:"SongArtImageThumbnailURL"`
-	SongArtImageURL          string   `dynamodbav:"SongArtImageURL"`
-	Title                    string   `dynamodbav:"Title"`
-	URL                      string   `dynamodbav:"URL"`
-	Lyrics                   []string `dynamodbav:"Lyrics"`
+	ID   string `dynamodbav:"ID"`
+	Song struct {
+		ArtistNames              string `dynamodbav:"ArtistNames"`
+		FullTitle                string `dynamodbav:"FullTitle"`
+		HeaderImageThumbnailURL  string `dynamodbav:"HeaderImageThumbnailURL"`
+		HeaderImageURL           string `dynamodbav:"HeaderImageURL"`
+		SongID                   int    `dynamodbav:"SongID"`
+		ID                       string `dynamodbav:"ID"`
+		Path                     string `dynamodbav:"Path"`
+		ReleaseDateForDisplay    string `dynamodbav:"ReleaseDateForDisplay"`
+		SongArtImageThumbnailURL string `dynamodbav:"SongArtImageThumbnailURL"`
+		SongArtImageURL          string `dynamodbav:"SongArtImageURL"`
+		Title                    string `dynamodbav:"Title"`
+		URL                      string `dynamodbav:"URL"`
+	} `dynamodbav:"Song"`
+	Lyrics []string `dynamodbav:"Lyrics"`
 }
 
 // Handler is our lambda handler invoked by the `lambda.Start` function call
 func Handler(ctx context.Context) (Response, error) {
 	var buf bytes.Buffer
 
-	lyric := randomSong()
-	body, err := json.Marshal(lyric)
+	data := random()
+	body, err := json.Marshal(data)
 	if err != nil {
 		return Response{StatusCode: 404}, err
 	}
@@ -80,7 +87,7 @@ func main() {
 	lambda.Start(Handler)
 }
 
-func randomSong() Song {
+func random() Data {
 	dbClient := newDbClient()
 
 	av, _ := attributevalue.MarshalMap(map[string]interface{}{
@@ -103,23 +110,26 @@ func randomSong() Song {
 	randomSong := &RandomSong{}
 	attributevalue.UnmarshalMap(res.Items[0], randomSong)
 
-	song := Song{
-		ArtistNames:              randomSong.ArtistNames,
-		FullTitle:                randomSong.FullTitle,
-		HeaderImageThumbnailURL:  randomSong.HeaderImageThumbnailURL,
-		HeaderImageURL:           randomSong.HeaderImageURL,
-		SongID:                   randomSong.SongID,
-		ID:                       randomSong.ID,
-		Path:                     randomSong.Path,
-		ReleaseDateForDisplay:    randomSong.ReleaseDateForDisplay,
-		SongArtImageThumbnailURL: randomSong.SongArtImageThumbnailURL,
-		SongArtImageURL:          randomSong.SongArtImageURL,
-		Title:                    randomSong.Title,
-		URL:                      randomSong.URL,
-		Lyrics:                   randomSong.Lyrics,
+	data := Data{
+		ID: randomSong.ID,
+		Song: Song{
+			ArtistNames:              randomSong.Song.ArtistNames,
+			FullTitle:                randomSong.Song.FullTitle,
+			HeaderImageThumbnailURL:  randomSong.Song.HeaderImageThumbnailURL,
+			HeaderImageURL:           randomSong.Song.HeaderImageURL,
+			SongID:                   randomSong.Song.SongID,
+			ID:                       randomSong.Song.ID,
+			Path:                     randomSong.Song.Path,
+			ReleaseDateForDisplay:    randomSong.Song.ReleaseDateForDisplay,
+			SongArtImageThumbnailURL: randomSong.Song.SongArtImageThumbnailURL,
+			SongArtImageURL:          randomSong.Song.SongArtImageURL,
+			Title:                    randomSong.Song.Title,
+			URL:                      randomSong.Song.URL,
+		},
+		Lyrics: randomSong.Lyrics,
 	}
 
-	return song
+	return data
 }
 
 func newDbClient() *dynamodb.Client {

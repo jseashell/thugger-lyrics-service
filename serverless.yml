@@ -33,9 +33,3 @@ functions:
       - httpApi:
           path: /random
           method: get
-  song:
-    handler: bin/song
-    events:
-      - httpApi:
-          path: /song
-          method: get
