@@ -16,9 +16,8 @@ provider:
          Action:
           - "dynamodb:GetItem"
           - "dynamodb:Scan"
-         Resource: 
-          - "arn:aws:dynamodb:*:*:table/thugger-lyrics"
-          - "arn:aws:dynamodb:*:*:table/thugger-songs"
+         Resource:
+          - "arn:aws:dynamodb:*:*:table/thugger-songs-main"
 
 package:
   individually: true
